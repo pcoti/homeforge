@@ -9,6 +9,7 @@ import FinanceView from './components/finances/FinanceView'
 import RequirementsView from './components/requirements/RequirementsView'
 import TimelineView from './components/timeline/TimelineView'
 import LocationView from './components/locations/LocationView'
+import ScorecardView from './components/scorecard/ScorecardView'
 import ChatView from './components/chat/ChatView'
 import SettingsView from './components/settings/SettingsView'
 
@@ -32,6 +33,7 @@ function AppRoutes() {
           <Route path="requirements" element={<RequirementsView />} />
           <Route path="timeline" element={<TimelineView />} />
           <Route path="locations" element={<LocationView />} />
+          <Route path="scorecard" element={<ScorecardView />} />
           <Route path="chat" element={<ChatView />} />
           <Route path="settings" element={<SettingsView />} />
         </Route>

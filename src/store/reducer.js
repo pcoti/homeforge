@@ -26,6 +26,10 @@ export const ActionTypes = {
   ADD_LOCATION: 'ADD_AREA',
   UPDATE_LOCATION: 'UPDATE_AREA',
   DELETE_LOCATION: 'DELETE_AREA',
+  // Scorecard
+  UPDATE_SCORECARD_WEIGHTS: 'UPDATE_SCORECARD_WEIGHTS',
+  UPDATE_SCORECARD_SCORE: 'UPDATE_SCORECARD_SCORE',
+  UPDATE_SCORECARD_NOTES: 'UPDATE_SCORECARD_NOTES',
   // Chat
   ADD_CHAT_MESSAGE: 'ADD_CHAT_MESSAGE',
   CLEAR_CHAT: 'CLEAR_CHAT',
@@ -214,6 +218,62 @@ export function appReducer(state, action) {
         ...state,
         properties: (state.properties || []).filter((p) => p.id !== action.payload),
       }
+
+    // Scorecard
+    case ActionTypes.UPDATE_SCORECARD_WEIGHTS:
+      return {
+        ...state,
+        scorecard: {
+          ...state.scorecard,
+          weights: { ...state.scorecard.weights, ...action.payload },
+        },
+      }
+
+    case ActionTypes.UPDATE_SCORECARD_SCORE: {
+      const { areaId, categoryId, criterionId, score } = action.payload
+      const sc = state.scorecard || { weights: {}, scores: {} }
+      const areaScores = sc.scores[areaId] || {}
+      const catScores = areaScores[categoryId] || {}
+      return {
+        ...state,
+        scorecard: {
+          ...sc,
+          scores: {
+            ...sc.scores,
+            [areaId]: {
+              ...areaScores,
+              [categoryId]: {
+                ...catScores,
+                [criterionId]: { ...(catScores[criterionId] || {}), score },
+              },
+            },
+          },
+        },
+      }
+    }
+
+    case ActionTypes.UPDATE_SCORECARD_NOTES: {
+      const { areaId: aid, categoryId: cid, criterionId: crid, notes } = action.payload
+      const scard = state.scorecard || { weights: {}, scores: {} }
+      const aScores = scard.scores[aid] || {}
+      const cScores = aScores[cid] || {}
+      return {
+        ...state,
+        scorecard: {
+          ...scard,
+          scores: {
+            ...scard.scores,
+            [aid]: {
+              ...aScores,
+              [cid]: {
+                ...cScores,
+                [crid]: { ...(cScores[crid] || {}), notes },
+              },
+            },
+          },
+        },
+      }
+    }
 
     case ActionTypes.ADD_CHAT_MESSAGE:
       return {

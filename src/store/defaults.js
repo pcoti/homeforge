@@ -1,4 +1,8 @@
 import { generateId } from '../utils/ids'
+import { getDefaultWeights } from '../components/scorecard/criteria'
+
+// Pre-generate area IDs so scorecard scores can reference them
+const _areaIds = Array.from({ length: 13 }, () => generateId())
 
 export const defaultSettings = {
   theme: 'dark',
@@ -154,7 +158,7 @@ export const defaultAreas = [
   // PACIFIC NORTHWEST
   // ═══════════════════════════════════════════════
   {
-    id: generateId(),
+    id: _areaIds[0],
     name: 'Battle Ground / Ridgefield Area',
     state: 'Washington',
     county: 'Clark County',
@@ -196,7 +200,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[1],
     name: 'Olympia / Yelm / Tenino Area',
     state: 'Washington',
     county: 'Thurston County',
@@ -238,7 +242,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[2],
     name: 'Woodland / Castle Rock / Kalama Area',
     state: 'Washington',
     county: 'Cowlitz County',
@@ -284,7 +288,7 @@ export const defaultAreas = [
   // SOUTHWEST
   // ═══════════════════════════════════════════════
   {
-    id: generateId(),
+    id: _areaIds[3],
     name: 'Prescott Valley / Chino Valley Area',
     state: 'Arizona',
     county: 'Yavapai County',
@@ -326,7 +330,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[4],
     name: 'Vail / Marana / Tucson Outskirts',
     state: 'Arizona',
     county: 'Pima County',
@@ -368,7 +372,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[5],
     name: 'Casa Grande / Florence / Coolidge Area',
     state: 'Arizona',
     county: 'Pinal County',
@@ -414,7 +418,7 @@ export const defaultAreas = [
   // TEXAS
   // ═══════════════════════════════════════════════
   {
-    id: generateId(),
+    id: _areaIds[6],
     name: 'Dripping Springs / Wimberley Area',
     state: 'Texas',
     county: 'Hays County',
@@ -456,7 +460,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[7],
     name: 'Canyon Lake / New Braunfels Area',
     state: 'Texas',
     county: 'Comal County',
@@ -498,7 +502,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[8],
     name: 'Bastrop / Smithville Area',
     state: 'Texas',
     county: 'Bastrop County',
@@ -544,7 +548,7 @@ export const defaultAreas = [
   // CENTRAL / MIDWEST
   // ═══════════════════════════════════════════════
   {
-    id: generateId(),
+    id: _areaIds[9],
     name: 'Colorado Springs / Falcon / Peyton Area',
     state: 'Colorado',
     county: 'El Paso County',
@@ -586,7 +590,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[10],
     name: 'Valparaiso / Chesterton Area',
     state: 'Indiana',
     county: 'Porter County',
@@ -632,7 +636,7 @@ export const defaultAreas = [
   // NORTHEAST
   // ═══════════════════════════════════════════════
   {
-    id: generateId(),
+    id: _areaIds[11],
     name: 'Milford / Amherst / Hollis Area',
     state: 'New Hampshire',
     county: 'Hillsborough County',
@@ -674,7 +678,7 @@ export const defaultAreas = [
     createdAt: new Date().toISOString(),
   },
   {
-    id: generateId(),
+    id: _areaIds[12],
     name: 'Sturbridge / Brookfield / Spencer Area',
     state: 'Massachusetts',
     county: 'Worcester County',
@@ -719,12 +723,192 @@ export const defaultAreas = [
 
 export const defaultChatHistory = []
 
+// Pre-populated scorecard scores for all seed areas
+// Scores are 1-10 based on criteria.js guides
+const _s = (score) => ({ score, notes: '' })
+
+export const defaultScorecard = {
+  weights: getDefaultWeights(),
+  scores: {
+    // 0: Clark County, WA — Battle Ground / Ridgefield
+    [_areaIds[0]]: {
+      financial:       { propertyTax: _s(8), incomeTax: _s(10), salesTax: _s(3), landCost: _s(4), costOfLiving: _s(6), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(6), ownerBuilder: _s(7), codeStrictness: _s(6), hoaFreedom: _s(8), zoningFlexibility: _s(7) },
+      healthcare:      { mgDistance: _s(8), mgQuality: _s(9), emergencyCare: _s(8), generalMedical: _s(8), pharmacySpecialist: _s(8) },
+      transportation:  { airportDistance: _s(8), airportQuality: _s(8), roadAccess: _s(7), cityProximity: _s(8) },
+      climate:         { summerComfort: _s(8), winterComfort: _s(6), disasterRisk: _s(7), sunshine: _s(5), humidity: _s(6) },
+      schools:         { districtRating: _s(8), schoolChoice: _s(7), extracurriculars: _s(7), higherEd: _s(7) },
+      infrastructure:  { internet: _s(7), cellCoverage: _s(8), waterReliability: _s(7), electricReliability: _s(8) },
+      community:       { culturalAmenities: _s(7), outdoorRec: _s(8), communityFeel: _s(7), friendsFamily: _s(4) },
+      safety:          { crimeRate: _s(7), naturalHazards: _s(7), emergencyServices: _s(7), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(8), soilQuality: _s(7), waterAccess: _s(7), privacy: _s(7) },
+    },
+    // 1: Thurston County, WA — Olympia / Yelm / Tenino
+    [_areaIds[1]]: {
+      financial:       { propertyTax: _s(7), incomeTax: _s(10), salesTax: _s(3), landCost: _s(6), costOfLiving: _s(6), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(6), ownerBuilder: _s(7), codeStrictness: _s(6), hoaFreedom: _s(8), zoningFlexibility: _s(7) },
+      healthcare:      { mgDistance: _s(5), mgQuality: _s(8), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(7) },
+      transportation:  { airportDistance: _s(5), airportQuality: _s(7), roadAccess: _s(7), cityProximity: _s(5) },
+      climate:         { summerComfort: _s(8), winterComfort: _s(6), disasterRisk: _s(7), sunshine: _s(4), humidity: _s(5) },
+      schools:         { districtRating: _s(6), schoolChoice: _s(6), extracurriculars: _s(6), higherEd: _s(6) },
+      infrastructure:  { internet: _s(5), cellCoverage: _s(6), waterReliability: _s(7), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(5), outdoorRec: _s(7), communityFeel: _s(7), friendsFamily: _s(3) },
+      safety:          { crimeRate: _s(6), naturalHazards: _s(6), emergencyServices: _s(7), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(6), soilQuality: _s(6), waterAccess: _s(7), privacy: _s(8) },
+    },
+    // 2: Cowlitz County, WA — Woodland / Castle Rock
+    [_areaIds[2]]: {
+      financial:       { propertyTax: _s(7), incomeTax: _s(10), salesTax: _s(3), landCost: _s(8), costOfLiving: _s(7), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(7), ownerBuilder: _s(8), codeStrictness: _s(7), hoaFreedom: _s(9), zoningFlexibility: _s(8) },
+      healthcare:      { mgDistance: _s(6), mgQuality: _s(9), emergencyCare: _s(6), generalMedical: _s(6), pharmacySpecialist: _s(6) },
+      transportation:  { airportDistance: _s(7), airportQuality: _s(8), roadAccess: _s(6), cityProximity: _s(6) },
+      climate:         { summerComfort: _s(8), winterComfort: _s(6), disasterRisk: _s(6), sunshine: _s(4), humidity: _s(5) },
+      schools:         { districtRating: _s(5), schoolChoice: _s(4), extracurriculars: _s(4), higherEd: _s(4) },
+      infrastructure:  { internet: _s(4), cellCoverage: _s(5), waterReliability: _s(7), electricReliability: _s(9) },
+      community:       { culturalAmenities: _s(3), outdoorRec: _s(7), communityFeel: _s(6), friendsFamily: _s(3) },
+      safety:          { crimeRate: _s(5), naturalHazards: _s(5), emergencyServices: _s(5), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(7), soilQuality: _s(7), waterAccess: _s(8), privacy: _s(9) },
+    },
+    // 3: Yavapai County, AZ — Prescott Valley / Chino Valley
+    [_areaIds[3]]: {
+      financial:       { propertyTax: _s(9), incomeTax: _s(8), salesTax: _s(5), landCost: _s(8), costOfLiving: _s(7), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(8), ownerBuilder: _s(10), codeStrictness: _s(8), hoaFreedom: _s(9), zoningFlexibility: _s(8) },
+      healthcare:      { mgDistance: _s(4), mgQuality: _s(8), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(7) },
+      transportation:  { airportDistance: _s(4), airportQuality: _s(8), roadAccess: _s(7), cityProximity: _s(5) },
+      climate:         { summerComfort: _s(6), winterComfort: _s(6), disasterRisk: _s(6), sunshine: _s(9), humidity: _s(9) },
+      schools:         { districtRating: _s(6), schoolChoice: _s(5), extracurriculars: _s(5), higherEd: _s(5) },
+      infrastructure:  { internet: _s(6), cellCoverage: _s(7), waterReliability: _s(5), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(5), outdoorRec: _s(8), communityFeel: _s(7), friendsFamily: _s(3) },
+      safety:          { crimeRate: _s(7), naturalHazards: _s(5), emergencyServices: _s(6), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(8), soilQuality: _s(4), waterAccess: _s(3), privacy: _s(8) },
+    },
+    // 4: Pima County, AZ — Vail / Marana
+    [_areaIds[4]]: {
+      financial:       { propertyTax: _s(9), incomeTax: _s(8), salesTax: _s(5), landCost: _s(9), costOfLiving: _s(8), insurance: _s(8) },
+      buildingFreedom: { permitProcess: _s(8), ownerBuilder: _s(10), codeStrictness: _s(8), hoaFreedom: _s(9), zoningFlexibility: _s(8) },
+      healthcare:      { mgDistance: _s(7), mgQuality: _s(7), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(7) },
+      transportation:  { airportDistance: _s(5), airportQuality: _s(5), roadAccess: _s(7), cityProximity: _s(7) },
+      climate:         { summerComfort: _s(3), winterComfort: _s(8), disasterRisk: _s(7), sunshine: _s(10), humidity: _s(9) },
+      schools:         { districtRating: _s(9), schoolChoice: _s(7), extracurriculars: _s(7), higherEd: _s(8) },
+      infrastructure:  { internet: _s(6), cellCoverage: _s(7), waterReliability: _s(5), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(6), outdoorRec: _s(7), communityFeel: _s(6), friendsFamily: _s(3) },
+      safety:          { crimeRate: _s(6), naturalHazards: _s(6), emergencyServices: _s(6), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(7), soilQuality: _s(4), waterAccess: _s(3), privacy: _s(8) },
+    },
+    // 5: Pinal County, AZ — Casa Grande / Florence
+    [_areaIds[5]]: {
+      financial:       { propertyTax: _s(9), incomeTax: _s(8), salesTax: _s(5), landCost: _s(10), costOfLiving: _s(9), insurance: _s(8) },
+      buildingFreedom: { permitProcess: _s(9), ownerBuilder: _s(10), codeStrictness: _s(9), hoaFreedom: _s(9), zoningFlexibility: _s(9) },
+      healthcare:      { mgDistance: _s(6), mgQuality: _s(8), emergencyCare: _s(6), generalMedical: _s(6), pharmacySpecialist: _s(6) },
+      transportation:  { airportDistance: _s(7), airportQuality: _s(8), roadAccess: _s(7), cityProximity: _s(6) },
+      climate:         { summerComfort: _s(2), winterComfort: _s(8), disasterRisk: _s(7), sunshine: _s(10), humidity: _s(9) },
+      schools:         { districtRating: _s(4), schoolChoice: _s(4), extracurriculars: _s(4), higherEd: _s(3) },
+      infrastructure:  { internet: _s(4), cellCoverage: _s(6), waterReliability: _s(4), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(3), outdoorRec: _s(5), communityFeel: _s(4), friendsFamily: _s(3) },
+      safety:          { crimeRate: _s(5), naturalHazards: _s(6), emergencyServices: _s(5), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(3), soilQuality: _s(4), waterAccess: _s(2), privacy: _s(9) },
+    },
+    // 6: Hays County, TX — Dripping Springs / Wimberley
+    [_areaIds[6]]: {
+      financial:       { propertyTax: _s(4), incomeTax: _s(10), salesTax: _s(4), landCost: _s(4), costOfLiving: _s(5), insurance: _s(6) },
+      buildingFreedom: { permitProcess: _s(6), ownerBuilder: _s(7), codeStrictness: _s(6), hoaFreedom: _s(6), zoningFlexibility: _s(6) },
+      healthcare:      { mgDistance: _s(7), mgQuality: _s(7), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(7) },
+      transportation:  { airportDistance: _s(7), airportQuality: _s(7), roadAccess: _s(7), cityProximity: _s(8) },
+      climate:         { summerComfort: _s(4), winterComfort: _s(7), disasterRisk: _s(5), sunshine: _s(7), humidity: _s(5) },
+      schools:         { districtRating: _s(9), schoolChoice: _s(8), extracurriculars: _s(8), higherEd: _s(8) },
+      infrastructure:  { internet: _s(8), cellCoverage: _s(8), waterReliability: _s(6), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(7), outdoorRec: _s(7), communityFeel: _s(8), friendsFamily: _s(4) },
+      safety:          { crimeRate: _s(8), naturalHazards: _s(5), emergencyServices: _s(7), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(8), soilQuality: _s(5), waterAccess: _s(5), privacy: _s(7) },
+    },
+    // 7: Comal County, TX — Canyon Lake / New Braunfels
+    [_areaIds[7]]: {
+      financial:       { propertyTax: _s(4), incomeTax: _s(10), salesTax: _s(4), landCost: _s(5), costOfLiving: _s(6), insurance: _s(6) },
+      buildingFreedom: { permitProcess: _s(7), ownerBuilder: _s(7), codeStrictness: _s(7), hoaFreedom: _s(7), zoningFlexibility: _s(7) },
+      healthcare:      { mgDistance: _s(7), mgQuality: _s(7), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(7) },
+      transportation:  { airportDistance: _s(7), airportQuality: _s(6), roadAccess: _s(7), cityProximity: _s(8) },
+      climate:         { summerComfort: _s(5), winterComfort: _s(7), disasterRisk: _s(5), sunshine: _s(7), humidity: _s(5) },
+      schools:         { districtRating: _s(8), schoolChoice: _s(7), extracurriculars: _s(7), higherEd: _s(7) },
+      infrastructure:  { internet: _s(7), cellCoverage: _s(8), waterReliability: _s(6), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(7), outdoorRec: _s(8), communityFeel: _s(8), friendsFamily: _s(4) },
+      safety:          { crimeRate: _s(7), naturalHazards: _s(5), emergencyServices: _s(7), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(8), soilQuality: _s(5), waterAccess: _s(6), privacy: _s(7) },
+    },
+    // 8: Bastrop County, TX — Bastrop / Smithville
+    [_areaIds[8]]: {
+      financial:       { propertyTax: _s(4), incomeTax: _s(10), salesTax: _s(4), landCost: _s(7), costOfLiving: _s(7), insurance: _s(5) },
+      buildingFreedom: { permitProcess: _s(8), ownerBuilder: _s(8), codeStrictness: _s(8), hoaFreedom: _s(9), zoningFlexibility: _s(8) },
+      healthcare:      { mgDistance: _s(7), mgQuality: _s(7), emergencyCare: _s(6), generalMedical: _s(6), pharmacySpecialist: _s(6) },
+      transportation:  { airportDistance: _s(7), airportQuality: _s(7), roadAccess: _s(6), cityProximity: _s(7) },
+      climate:         { summerComfort: _s(4), winterComfort: _s(7), disasterRisk: _s(5), sunshine: _s(7), humidity: _s(5) },
+      schools:         { districtRating: _s(5), schoolChoice: _s(5), extracurriculars: _s(5), higherEd: _s(6) },
+      infrastructure:  { internet: _s(5), cellCoverage: _s(6), waterReliability: _s(6), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(5), outdoorRec: _s(7), communityFeel: _s(7), friendsFamily: _s(3) },
+      safety:          { crimeRate: _s(6), naturalHazards: _s(4), emergencyServices: _s(6), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(7), soilQuality: _s(7), waterAccess: _s(6), privacy: _s(8) },
+    },
+    // 9: El Paso County, CO — Colorado Springs / Falcon / Peyton
+    [_areaIds[9]]: {
+      financial:       { propertyTax: _s(10), incomeTax: _s(6), salesTax: _s(5), landCost: _s(7), costOfLiving: _s(6), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(6), ownerBuilder: _s(7), codeStrictness: _s(6), hoaFreedom: _s(7), zoningFlexibility: _s(7) },
+      healthcare:      { mgDistance: _s(5), mgQuality: _s(8), emergencyCare: _s(8), generalMedical: _s(8), pharmacySpecialist: _s(8) },
+      transportation:  { airportDistance: _s(5), airportQuality: _s(9), roadAccess: _s(8), cityProximity: _s(7) },
+      climate:         { summerComfort: _s(8), winterComfort: _s(4), disasterRisk: _s(5), sunshine: _s(10), humidity: _s(9) },
+      schools:         { districtRating: _s(8), schoolChoice: _s(7), extracurriculars: _s(8), higherEd: _s(7) },
+      infrastructure:  { internet: _s(7), cellCoverage: _s(8), waterReliability: _s(5), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(7), outdoorRec: _s(10), communityFeel: _s(7), friendsFamily: _s(3) },
+      safety:          { crimeRate: _s(6), naturalHazards: _s(5), emergencyServices: _s(8), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(9), soilQuality: _s(5), waterAccess: _s(4), privacy: _s(7) },
+    },
+    // 10: Porter County, IN — Valparaiso / Chesterton
+    [_areaIds[10]]: {
+      financial:       { propertyTax: _s(8), incomeTax: _s(8), salesTax: _s(6), landCost: _s(8), costOfLiving: _s(8), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(7), ownerBuilder: _s(7), codeStrictness: _s(7), hoaFreedom: _s(8), zoningFlexibility: _s(7) },
+      healthcare:      { mgDistance: _s(5), mgQuality: _s(9), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(7) },
+      transportation:  { airportDistance: _s(6), airportQuality: _s(10), roadAccess: _s(7), cityProximity: _s(7) },
+      climate:         { summerComfort: _s(7), winterComfort: _s(3), disasterRisk: _s(5), sunshine: _s(5), humidity: _s(5) },
+      schools:         { districtRating: _s(8), schoolChoice: _s(7), extracurriculars: _s(7), higherEd: _s(7) },
+      infrastructure:  { internet: _s(7), cellCoverage: _s(8), waterReliability: _s(8), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(6), outdoorRec: _s(7), communityFeel: _s(7), friendsFamily: _s(5) },
+      safety:          { crimeRate: _s(7), naturalHazards: _s(6), emergencyServices: _s(7), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(3), soilQuality: _s(9), waterAccess: _s(8), privacy: _s(7) },
+    },
+    // 11: Hillsborough County, NH — Milford / Amherst / Hollis
+    [_areaIds[11]]: {
+      financial:       { propertyTax: _s(3), incomeTax: _s(10), salesTax: _s(10), landCost: _s(5), costOfLiving: _s(5), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(6), ownerBuilder: _s(7), codeStrictness: _s(6), hoaFreedom: _s(8), zoningFlexibility: _s(6) },
+      healthcare:      { mgDistance: _s(6), mgQuality: _s(10), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(8) },
+      transportation:  { airportDistance: _s(7), airportQuality: _s(9), roadAccess: _s(8), cityProximity: _s(7) },
+      climate:         { summerComfort: _s(8), winterComfort: _s(3), disasterRisk: _s(7), sunshine: _s(6), humidity: _s(6) },
+      schools:         { districtRating: _s(9), schoolChoice: _s(8), extracurriculars: _s(8), higherEd: _s(7) },
+      infrastructure:  { internet: _s(7), cellCoverage: _s(8), waterReliability: _s(7), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(7), outdoorRec: _s(8), communityFeel: _s(9), friendsFamily: _s(7) },
+      safety:          { crimeRate: _s(9), naturalHazards: _s(7), emergencyServices: _s(7), regulatoryStability: _s(8) },
+      landQuality:     { terrainViews: _s(8), soilQuality: _s(5), waterAccess: _s(7), privacy: _s(8) },
+    },
+    // 12: Worcester County, MA — Sturbridge / Brookfield / Spencer
+    [_areaIds[12]]: {
+      financial:       { propertyTax: _s(4), incomeTax: _s(6), salesTax: _s(5), landCost: _s(6), costOfLiving: _s(5), insurance: _s(7) },
+      buildingFreedom: { permitProcess: _s(4), ownerBuilder: _s(4), codeStrictness: _s(4), hoaFreedom: _s(7), zoningFlexibility: _s(5) },
+      healthcare:      { mgDistance: _s(6), mgQuality: _s(10), emergencyCare: _s(7), generalMedical: _s(7), pharmacySpecialist: _s(8) },
+      transportation:  { airportDistance: _s(5), airportQuality: _s(9), roadAccess: _s(8), cityProximity: _s(6) },
+      climate:         { summerComfort: _s(8), winterComfort: _s(3), disasterRisk: _s(7), sunshine: _s(6), humidity: _s(6) },
+      schools:         { districtRating: _s(8), schoolChoice: _s(7), extracurriculars: _s(7), higherEd: _s(8) },
+      infrastructure:  { internet: _s(6), cellCoverage: _s(7), waterReliability: _s(7), electricReliability: _s(7) },
+      community:       { culturalAmenities: _s(7), outdoorRec: _s(7), communityFeel: _s(8), friendsFamily: _s(7) },
+      safety:          { crimeRate: _s(8), naturalHazards: _s(7), emergencyServices: _s(7), regulatoryStability: _s(7) },
+      landQuality:     { terrainViews: _s(7), soilQuality: _s(5), waterAccess: _s(7), privacy: _s(7) },
+    },
+  },
+}
+
 export const defaultState = {
   settings: defaultSettings,
   finances: defaultFinances,
   requirements: defaultRequirements,
   timeline: defaultTimeline,
-  locations: defaultAreas, // kept as "locations" key for backward compat
+  locations: defaultAreas,
   properties: [],
+  scorecard: defaultScorecard,
   chatHistory: defaultChatHistory,
 }

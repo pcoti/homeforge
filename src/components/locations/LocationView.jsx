@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useAppContext } from '../../store/AppContext'
 import { ActionTypes } from '../../store/reducer'
+import { calculateCompositeScore } from '../scorecard/criteria'
 import Button from '../shared/Button'
 import AreaCard from './LocationCard'
 import AreaModal from './AreaModal'
@@ -18,6 +19,10 @@ export default function LocationView() {
   const [activeAreaId, setActiveAreaId] = useState(null)
   const [expandedAreas, setExpandedAreas] = useState({})
   const [tagFilter, setTagFilter] = useState('')
+  const [sortBy, setSortBy] = useState('name')
+  const [search, setSearch] = useState('')
+
+  const scorecard = state.scorecard || { weights: {}, scores: {} }
 
   // Collect all tags for filter
   const allTags = useMemo(() => {
@@ -26,11 +31,42 @@ export default function LocationView() {
     return Array.from(tagSet).sort()
   }, [areas])
 
-  // Filter areas by tag
+  // Filter areas by tag + search
   const filteredAreas = useMemo(() => {
-    if (!tagFilter) return areas
-    return areas.filter((a) => (a.tags || []).includes(tagFilter))
-  }, [areas, tagFilter])
+    let result = areas
+    if (tagFilter) {
+      result = result.filter((a) => (a.tags || []).includes(tagFilter))
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      result = result.filter((a) =>
+        a.name?.toLowerCase().includes(q) ||
+        a.state?.toLowerCase().includes(q) ||
+        a.county?.toLowerCase().includes(q) ||
+        a.region?.toLowerCase().includes(q)
+      )
+    }
+    // Sort
+    result = [...result].sort((a, b) => {
+      switch (sortBy) {
+        case 'score': {
+          const sa = calculateCompositeScore(scorecard.scores[a.id], scorecard.weights)
+          const sb = calculateCompositeScore(scorecard.scores[b.id], scorecard.weights)
+          return sb - sa
+        }
+        case 'landCost':
+          return (a.landInfo?.avgPricePerAcre || Infinity) - (b.landInfo?.avgPricePerAcre || Infinity)
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0)
+        case 'state':
+          return (a.state || '').localeCompare(b.state || '')
+        case 'name':
+        default:
+          return (a.name || '').localeCompare(b.name || '')
+      }
+    })
+    return result
+  }, [areas, tagFilter, search, sortBy, scorecard])
 
   const toggleExpand = (id) => {
     setExpandedAreas((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -111,9 +147,41 @@ export default function LocationView() {
 
   return (
     <div className="space-y-6">
-      {/* Top bar: tag filters + add */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <div className="flex items-center gap-2 flex-wrap flex-1">
+      {/* Top bar: search, sort, tag filters, add */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          {/* Search */}
+          <div className="relative flex-1 max-w-xs">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search areas..."
+              className="w-full pl-9 pr-3 py-2 text-sm bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+            />
+          </div>
+
+          {/* Sort */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-3 py-2 text-sm bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          >
+            <option value="name">Sort: Name</option>
+            <option value="score">Sort: Scorecard Rating</option>
+            <option value="landCost">Sort: Land Cost (low→high)</option>
+            <option value="rating">Sort: Star Rating</option>
+            <option value="state">Sort: State</option>
+          </select>
+
+          <Button onClick={handleAddArea}>+ Add Area</Button>
+        </div>
+
+        {/* Tag filter chips */}
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setTagFilter('')}
             className={`px-3 py-1.5 text-sm rounded-lg border transition-all cursor-pointer ${
@@ -138,7 +206,6 @@ export default function LocationView() {
             </button>
           ))}
         </div>
-        <Button onClick={handleAddArea}>+ Add Area</Button>
       </div>
 
       {/* Area cards */}

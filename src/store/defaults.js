@@ -6,7 +6,7 @@ const _areaIds = Array.from({ length: 31 }, () => generateId())
 
 export const defaultSettings = {
   theme: 'dark',
-  ollamaUrl: 'http://localhost:11434',
+  ollamaUrl: '/api/ollama',
   ollamaModel: 'llama3.2',
   homeValue: 400000,
   homePurchasePrice: 500000,

@@ -227,11 +227,13 @@ export const QUESTIONS = [
     subtitle: 'Any regions you want to focus on? (Skip to see all)',
     type: 'multi',
     options: [
-      { id: 'pnw', label: 'Pacific Northwest', description: 'Washington state — no income tax, mild climate, green', tagFilter: 'pnw' },
-      { id: 'southwest', label: 'Southwest', description: 'Arizona — owner-builder paradise, dry sunshine, cheap', tagFilter: 'southwest' },
+      { id: 'pnw', label: 'Pacific Northwest', description: 'WA, OR — no income tax (WA), mild climate, green', tagFilter: 'pnw' },
+      { id: 'southwest', label: 'Southwest', description: 'AZ — owner-builder paradise, dry sunshine, cheap', tagFilter: 'southwest' },
       { id: 'texas', label: 'Texas Hill Country', description: 'No income tax, Hill Country beauty, Austin/SA access', tagFilter: 'texas' },
-      { id: 'midwest', label: 'Midwest', description: 'Indiana, Colorado — low taxes, affordable, 4 seasons', tagFilter: 'midwest' },
-      { id: 'northeast', label: 'Northeast', description: 'NH, MA — Mass General access, NJ friends close, top schools', tagFilter: 'northeast' },
+      { id: 'southeast', label: 'Southeast', description: 'TN, NC, SC — no income tax (TN), mild 4 seasons, growing', tagFilter: 'southeast' },
+      { id: 'mountainwest', label: 'Mountain West', description: 'ID, NV, MT, UT — scenic, outdoor lifestyle, growing', tagFilter: 'mountain west' },
+      { id: 'midwest', label: 'Midwest', description: 'IN, CO — low taxes, affordable, 4 seasons', tagFilter: 'midwest' },
+      { id: 'northeast', label: 'Northeast', description: 'NH, MA, ME — Mass General access, NJ friends, top schools', tagFilter: 'northeast' },
     ],
   },
 ]

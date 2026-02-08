@@ -7,7 +7,7 @@ export const CATEGORIES = [
     id: 'financial',
     name: 'Financial',
     description: 'Tax burden, land costs, and overall affordability',
-    defaultWeight: 20,
+    defaultWeight: 18,
     criteria: [
       {
         id: 'propertyTax',
@@ -51,7 +51,7 @@ export const CATEGORIES = [
     id: 'buildingFreedom',
     name: 'Building Freedom',
     description: 'Permitting ease, owner-builder rights, regulatory burden',
-    defaultWeight: 15,
+    defaultWeight: 13,
     criteria: [
       {
         id: 'permitProcess',
@@ -89,7 +89,7 @@ export const CATEGORIES = [
     id: 'healthcare',
     name: 'Healthcare',
     description: 'MG treatment access, emergency care, medical infrastructure',
-    defaultWeight: 15,
+    defaultWeight: 14,
     criteria: [
       {
         id: 'mgDistance',
@@ -350,6 +350,44 @@ export const CATEGORIES = [
         name: 'Privacy & Seclusion',
         description: 'How private/secluded can you be on 5–20 acres?',
         guide: '10 = very remote/private | 8 = well-separated | 6 = moderate privacy | 4 = some neighbors | 2 = dense/subdivision',
+      },
+    ],
+  },
+  {
+    id: 'growthOutlook',
+    name: 'Growth & Outlook',
+    description: 'Population trends, economic vitality, housing appreciation, future trajectory',
+    defaultWeight: 5,
+    criteria: [
+      {
+        id: 'populationTrend',
+        name: 'Population Trend',
+        description: 'Is the area growing, stable, or declining?',
+        guide: '10 = top-10 fastest growing | 8 = strong growth (3%+/yr) | 6 = moderate growth (1–3%) | 4 = stable/flat | 2 = declining',
+      },
+      {
+        id: 'jobMarket',
+        name: 'Job Market & Economy',
+        description: 'Local employment opportunities and economic diversity',
+        guide: '10 = booming/diverse economy | 8 = strong job market | 6 = adequate | 4 = limited/single-industry | 2 = weak/declining',
+      },
+      {
+        id: 'housingAppreciation',
+        name: 'Housing Appreciation',
+        description: 'Historical and projected property value trends',
+        guide: '10 = rapid appreciation (8%+/yr) | 8 = strong (5–8%) | 6 = moderate (3–5%) | 4 = slow (1–3%) | 2 = flat/declining',
+      },
+      {
+        id: 'developmentPipeline',
+        name: 'Development & Infrastructure Investment',
+        description: 'Planned roads, schools, commercial development, public investment',
+        guide: '10 = major projects planned | 8 = significant investment | 6 = moderate development | 4 = minimal | 2 = stagnant/no plans',
+      },
+      {
+        id: 'remoteFriendly',
+        name: 'Remote Work Viability',
+        description: 'Infrastructure and culture supporting remote/WFH lifestyle',
+        guide: '10 = excellent (fiber + coworking + culture) | 8 = good | 6 = adequate | 4 = challenging | 2 = very difficult',
       },
     ],
   },

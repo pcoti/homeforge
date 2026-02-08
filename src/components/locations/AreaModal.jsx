@@ -42,7 +42,40 @@ const emptyForm = {
   cons: '',
   notes: '',
   rating: 3,
+  // Tier & Land Availability
+  tier: '',
+  landAvailability: 'unknown',
+  // Research Checklist
+  calledCounty: false,
+  talkedToBuilder: false,
+  checkedInternet: false,
+  visitedArea: false,
+  talkedToResidents: false,
+  checkedWaterRights: false,
 }
+
+const tierOptions = [
+  { value: '', label: 'None' },
+  { value: 'contender', label: 'Contender' },
+  { value: 'shortlist', label: 'Shortlist' },
+  { value: 'eliminated', label: 'Eliminated' },
+]
+
+const landAvailabilityOptions = [
+  { value: 'unknown', label: 'Unknown' },
+  { value: 'abundant', label: 'Abundant' },
+  { value: 'moderate', label: 'Moderate' },
+  { value: 'scarce', label: 'Scarce' },
+]
+
+const researchItems = [
+  { key: 'calledCounty', label: 'Called county/planning dept' },
+  { key: 'talkedToBuilder', label: 'Talked to local builder' },
+  { key: 'checkedInternet', label: 'Checked internet availability' },
+  { key: 'visitedArea', label: 'Visited the area' },
+  { key: 'talkedToResidents', label: 'Talked to local residents' },
+  { key: 'checkedWaterRights', label: 'Checked water rights/wells' },
+]
 
 export default function AreaModal({ open, onClose, onSave, area }) {
   const [form, setForm] = useState(emptyForm)
@@ -50,6 +83,7 @@ export default function AreaModal({ open, onClose, onSave, area }) {
   useEffect(() => {
     if (open) {
       if (area) {
+        const rc = area.researchChecklist || {}
         setForm({
           name: area.name || '',
           state: area.state || 'Texas',
@@ -82,6 +116,14 @@ export default function AreaModal({ open, onClose, onSave, area }) {
           cons: (area.cons || []).join(', '),
           notes: area.notes || '',
           rating: area.rating || 3,
+          tier: area.tier || '',
+          landAvailability: area.landAvailability || 'unknown',
+          calledCounty: rc.calledCounty || false,
+          talkedToBuilder: rc.talkedToBuilder || false,
+          checkedInternet: rc.checkedInternet || false,
+          visitedArea: rc.visitedArea || false,
+          talkedToResidents: rc.talkedToResidents || false,
+          checkedWaterRights: rc.checkedWaterRights || false,
         })
       } else {
         setForm(emptyForm)
@@ -133,10 +175,21 @@ export default function AreaModal({ open, onClose, onSave, area }) {
       cons: form.cons ? form.cons.split(',').map((s) => s.trim()).filter(Boolean) : [],
       notes: form.notes.trim(),
       rating: Number(form.rating) || 3,
+      tier: form.tier || null,
+      landAvailability: form.landAvailability || 'unknown',
+      researchChecklist: {
+        calledCounty: form.calledCounty,
+        talkedToBuilder: form.talkedToBuilder,
+        checkedInternet: form.checkedInternet,
+        visitedArea: form.visitedArea,
+        talkedToResidents: form.talkedToResidents,
+        checkedWaterRights: form.checkedWaterRights,
+      },
     })
   }
 
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value })
+  const toggleCheck = (field) => () => setForm({ ...form, [field]: !form[field] })
 
   return (
     <Modal
@@ -166,6 +219,8 @@ export default function AreaModal({ open, onClose, onSave, area }) {
               { value: 3, label: '3 - Good' }, { value: 4, label: '4 - Great' },
               { value: 5, label: '5 - Excellent' },
             ]} />
+            <Select label="Tier" value={form.tier} onChange={set('tier')} options={tierOptions} />
+            <Select label="Land Availability" value={form.landAvailability} onChange={set('landAvailability')} options={landAvailabilityOptions} />
           </div>
           <Input label="Tags (comma-separated)" value={form.tags} onChange={set('tags')}
             placeholder="e.g., hill country, rural, low taxes, no HOA, hunting"
@@ -218,6 +273,26 @@ export default function AreaModal({ open, onClose, onSave, area }) {
             <Input label="School District" value={form.schoolDistrict} onChange={set('schoolDistrict')} placeholder="e.g., Round Top-Carmine ISD" />
             <Input label="Nearest Hospital" value={form.nearestHospital} onChange={set('nearestHospital')} placeholder="e.g., St. Mark's, La Grange (25 min)" />
             <Input label="Nearest Grocery" value={form.nearestGrocery} onChange={set('nearestGrocery')} placeholder="e.g., HEB, Brenham (20 min)" />
+          </div>
+        </div>
+
+        {/* Research Progress */}
+        <div>
+          <h4 className="text-sm font-medium text-[var(--accent)] mb-3">Research Progress</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {researchItems.map(({ key, label }) => (
+              <label key={key} className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={form[key]}
+                  onChange={toggleCheck(key)}
+                  className="w-4 h-4 rounded border-[var(--border-color)] accent-[var(--accent)] cursor-pointer"
+                />
+                <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                  {label}
+                </span>
+              </label>
+            ))}
           </div>
         </div>
 

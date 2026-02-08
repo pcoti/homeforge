@@ -8,6 +8,8 @@ const emptyForm = {
   name: '',
   address: '',
   estLandCost: 0,
+  estSiteWorkCost: 0,
+  estInfrastructureCost: 0,
   acreage: 0,
   listingUrl: '',
   floodZone: '',
@@ -38,6 +40,8 @@ export default function PropertyModal({ open, onClose, onSave, property, areaId 
           name: property.name || '',
           address: property.address || '',
           estLandCost: property.estLandCost || 0,
+          estSiteWorkCost: property.estSiteWorkCost || 0,
+          estInfrastructureCost: property.estInfrastructureCost || 0,
           acreage: property.acreage || 0,
           listingUrl: property.listingUrl || '',
           floodZone: property.floodZone || '',
@@ -62,6 +66,8 @@ export default function PropertyModal({ open, onClose, onSave, property, areaId 
       name: form.name.trim(),
       address: form.address.trim(),
       estLandCost: Number(form.estLandCost) || 0,
+      estSiteWorkCost: Number(form.estSiteWorkCost) || 0,
+      estInfrastructureCost: Number(form.estInfrastructureCost) || 0,
       acreage: Number(form.acreage) || 0,
       listingUrl: form.listingUrl.trim(),
       floodZone: form.floodZone.trim(),
@@ -95,8 +101,10 @@ export default function PropertyModal({ open, onClose, onSave, property, areaId 
           <Select label="Status" value={form.status} onChange={set('status')} options={statusOptions} />
           <Input label="Address / Location" value={form.address} onChange={set('address')} placeholder="e.g., FM 1457 near Carmine" />
           <Input label="Listing URL" value={form.listingUrl} onChange={set('listingUrl')} placeholder="https://..." />
-          <Input label="Estimated Cost" type="number" prefix="$" value={form.estLandCost} onChange={set('estLandCost')} />
+          <Input label="Est. Land Cost" type="number" prefix="$" value={form.estLandCost} onChange={set('estLandCost')} />
           <Input label="Acreage" type="number" value={form.acreage} onChange={set('acreage')} />
+          <Input label="Est. Site Work" type="number" prefix="$" value={form.estSiteWorkCost} onChange={set('estSiteWorkCost')} />
+          <Input label="Est. Infrastructure" type="number" prefix="$" value={form.estInfrastructureCost} onChange={set('estInfrastructureCost')} />
           <Input label="Flood Zone" value={form.floodZone} onChange={set('floodZone')} placeholder="e.g., X, A, None" />
           <Input label="Utilities On-site" value={form.utilities} onChange={set('utilities')} placeholder="e.g., Electric, Well, Septic" />
           <Input label="Restrictions" value={form.restrictions} onChange={set('restrictions')} placeholder="e.g., Ag exempt, no HOA" />

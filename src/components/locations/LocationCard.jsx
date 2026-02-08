@@ -28,9 +28,23 @@ const statusColors = {
   passed: 'gray',
 }
 
+const landAvailabilityColors = {
+  abundant: 'text-emerald-400 bg-emerald-500/15',
+  moderate: 'text-amber-400 bg-amber-500/15',
+  scarce: 'text-red-400 bg-red-500/15',
+  unknown: 'text-gray-400 bg-gray-500/15',
+}
+
+const tierBtnColors = {
+  contender: { active: 'bg-blue-500/20 text-blue-400 border-blue-500/40', inactive: 'text-[var(--text-muted)] border-[var(--border-color)] hover:text-blue-400 hover:border-blue-500/40' },
+  shortlist: { active: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', inactive: 'text-[var(--text-muted)] border-[var(--border-color)] hover:text-emerald-400 hover:border-emerald-500/40' },
+  eliminated: { active: 'bg-red-500/20 text-red-400 border-red-500/40', inactive: 'text-[var(--text-muted)] border-[var(--border-color)] hover:text-red-400 hover:border-red-500/40' },
+}
+
 // Property card (nested under an area)
 export function PropertyCard({ property, onEdit, onDelete }) {
-  const { id, name, estLandCost, acreage, status, pros, cons, floodZone, listingUrl } = property
+  const { id, name, estLandCost, estSiteWorkCost, estInfrastructureCost, acreage, status, pros, cons, floodZone, listingUrl } = property
+  const totalEstCost = (estLandCost || 0) + (estSiteWorkCost || 0) + (estInfrastructureCost || 0)
 
   return (
     <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg p-3 hover:border-[var(--accent)]/30 transition-all">
@@ -48,6 +62,14 @@ export function PropertyCard({ property, onEdit, onDelete }) {
             )}
             {floodZone && <span>Flood: {floodZone}</span>}
           </div>
+          {totalEstCost > 0 && (estSiteWorkCost > 0 || estInfrastructureCost > 0) && (
+            <div className="mt-1 text-xs font-mono text-[var(--accent)]">
+              Total: {formatCurrency(totalEstCost)}
+              <span className="text-[var(--text-muted)] ml-1">
+                (land{estSiteWorkCost > 0 ? ' + site' : ''}{estInfrastructureCost > 0 ? ' + infra' : ''})
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           {listingUrl && (
@@ -83,8 +105,11 @@ export function PropertyCard({ property, onEdit, onDelete }) {
 }
 
 // Area card (top-level region/county)
-export default function AreaCard({ area, properties, expanded, onToggle, onEdit, onDelete, onAddProperty, onEditProperty, onDeleteProperty }) {
+export default function AreaCard({ area, properties, expanded, onToggle, onEdit, onDelete, onAddProperty, onEditProperty, onDeleteProperty, onUpdateTier }) {
   const propCount = properties.length
+  const researchChecklist = area.researchChecklist || {}
+  const researchDone = Object.values(researchChecklist).filter(Boolean).length
+  const landAvail = area.landAvailability || 'unknown'
 
   return (
     <Card className="hover:border-[var(--accent)]/20 transition-all">
@@ -105,6 +130,11 @@ export default function AreaCard({ area, properties, expanded, onToggle, onEdit,
             </p>
           </button>
           <div className="flex items-center gap-2 flex-shrink-0">
+            {researchDone > 0 && (
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)]">
+                Research: {researchDone}/6
+              </span>
+            )}
             <StarRating rating={area.rating || 0} />
           </div>
         </div>
@@ -140,12 +170,17 @@ export default function AreaCard({ area, properties, expanded, onToggle, onEdit,
               <p className="text-sm font-medium truncate">{area.infrastructure.internetProviders}</p>
             </div>
           )}
-          {area.landInfo?.floodRisk && (
+          {landAvail !== 'unknown' ? (
+            <div className={`rounded-lg p-2 ${landAvailabilityColors[landAvail]}`}>
+              <p className="text-xs opacity-75">Land Availability</p>
+              <p className="text-sm font-medium capitalize">{landAvail}</p>
+            </div>
+          ) : area.landInfo?.floodRisk ? (
             <div className="bg-[var(--bg-secondary)] rounded-lg p-2">
               <p className="text-xs text-[var(--text-muted)]">Flood Risk</p>
               <p className="text-sm font-medium">{area.landInfo.floodRisk}</p>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Pros/Cons */}
@@ -277,9 +312,23 @@ export default function AreaCard({ area, properties, expanded, onToggle, onEdit,
 
         {/* Footer actions */}
         <div className="flex items-center justify-between pt-2 border-t border-[var(--border-color)]">
-          <span className="text-xs text-[var(--text-muted)]">
-            {propCount} {propCount === 1 ? 'property' : 'properties'}
-          </span>
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-[var(--text-muted)] mr-2">
+              {propCount} {propCount === 1 ? 'property' : 'properties'}
+            </span>
+            {/* Tier quick buttons */}
+            {['contender', 'shortlist', 'eliminated'].map((t) => (
+              <button
+                key={t}
+                onClick={() => onUpdateTier(area.id, area.tier === t ? null : t)}
+                className={`px-2 py-0.5 text-[10px] rounded border transition-all cursor-pointer capitalize ${
+                  area.tier === t ? tierBtnColors[t].active : tierBtnColors[t].inactive
+                }`}
+              >
+                {t === 'eliminated' ? 'Elim' : t === 'contender' ? 'Contender' : 'Shortlist'}
+              </button>
+            ))}
+          </div>
           <div className="flex items-center gap-3">
             <button onClick={() => onEdit(area)}
               className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer">

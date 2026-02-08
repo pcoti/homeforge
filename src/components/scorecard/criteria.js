@@ -57,6 +57,12 @@ export const CATEGORIES = [
         description: 'How quickly properties sell and retain value in this market',
         guide: '10 = hot market (<30 days avg) | 8 = healthy (30–60) | 6 = moderate (60–90) | 4 = slow (90–180) | 2 = stagnant (180+)',
       },
+      {
+        id: 'agExemption',
+        name: 'Agricultural Tax Exemption',
+        description: 'Availability of ag/timber exemptions for property tax savings',
+        guide: '10=easy ag exempt, 80%+ tax reduction | 7=available with effort | 5=limited programs | 3=difficult/restrictive | 1=not available',
+      },
     ],
   },
   {
@@ -215,6 +221,12 @@ export const CATEGORIES = [
         description: 'Average humidity and air quality comfort',
         guide: '10 = dry/arid | 8 = low humidity | 6 = moderate | 4 = humid | 2 = very humid / poor air',
       },
+      {
+        id: 'climateResilience',
+        name: 'Climate Change Resilience',
+        description: 'Long-term water security, wildfire trend, heat trajectory over 30 years',
+        guide: '10=excellent long-term outlook | 7=good resilience, minor concerns | 5=moderate risks emerging | 3=significant climate threats | 1=severe water/fire/heat crisis',
+      },
     ],
   },
   {
@@ -323,6 +335,12 @@ export const CATEGORIES = [
         description: 'Senior services, healthcare access, walkability for future needs',
         guide: '10 = excellent senior infrastructure | 8 = good services nearby | 6 = adequate | 4 = limited | 2 = very rural/no services',
       },
+      {
+        id: 'dailyLifeAccess',
+        name: 'Daily Life Accessibility',
+        description: 'Walkability, errand convenience, delivery services, emergency response time for someone with chronic illness',
+        guide: '10=walkable town, all services | 7=short drive, good services | 5=20-30min drives, some delivery | 3=remote, limited services | 1=very isolated',
+      },
     ],
   },
   {
@@ -360,6 +378,12 @@ export const CATEGORIES = [
         name: 'Environmental Red Flags',
         description: 'Contamination, superfund sites, mining, industrial pollution, radon',
         guide: '10 = no known issues | 8 = minimal | 6 = minor concerns | 4 = some contamination nearby | 2 = major environmental issues',
+      },
+      {
+        id: 'climateTrajectory',
+        name: 'Long-Term Climate Risk',
+        description: 'Wildfire risk trend, drought trajectory, flood pattern changes, insurance availability',
+        guide: '10=improving or stable | 7=minor trend concerns | 5=notable worsening | 3=rapidly deteriorating | 1=crisis-level trajectory',
       },
     ],
   },
@@ -404,6 +428,12 @@ export const CATEGORIES = [
         name: 'Septic Feasibility',
         description: 'Soil perc test success rates, septic system viability',
         guide: '10 = excellent perc, any system | 8 = good soils | 6 = acceptable with engineered | 4 = challenging | 2 = very poor / requires alt system',
+      },
+      {
+        id: 'waterRights',
+        name: 'Water Rights & Well Permits',
+        description: 'Clarity of water rights, ease of well drilling permits, aquifer health',
+        guide: '10=clear rights, easy permits, strong aquifer | 7=straightforward process | 5=some restrictions | 3=complex/uncertain rights | 1=denied/depleted aquifer',
       },
     ],
   },

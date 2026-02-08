@@ -29,7 +29,7 @@ export default function ScorecardView() {
       <div>
         <h1 className="font-serif text-2xl font-semibold mb-1">Location Scorecard</h1>
         <p className="text-sm text-[var(--text-muted)]">
-          Evaluate and compare areas across 11 categories with 56 weighted criteria.
+          Evaluate and compare areas across 11 categories with 61 weighted criteria.
           Click any area to score it in detail.
         </p>
       </div>

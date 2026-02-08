@@ -1,25 +1,26 @@
 import { useState, useMemo } from 'react'
 import { useAppContext } from '../../store/AppContext'
-import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg, getScoreColor, getActiveWeights } from './criteria'
-import { ScoreBadge } from './ScoreBar'
+import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg, getActiveWeights } from './criteria'
+import { ScoreBadge, getLetterGrade } from './ScoreBar'
 
-const cellColorMap = {
-  green: 'bg-emerald-500/15 text-emerald-400',
+const gradeColorMap = {
+  emerald: 'bg-emerald-500/15 text-emerald-400',
   blue: 'bg-blue-500/15 text-blue-400',
   amber: 'bg-amber-500/15 text-amber-400',
   red: 'bg-red-500/15 text-red-400',
+  gray: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]',
 }
 
 function ScoreCell({ score }) {
   if (!score || score === 0) {
     return <td className="text-center text-xs text-[var(--text-muted)] px-2 py-1.5">--</td>
   }
-  const color = getScoreColor(Math.round(score))
+  const grade = getLetterGrade(score)
   const display = score % 1 === 0 ? score : score.toFixed(1)
   return (
     <td className="text-center px-2 py-1.5">
-      <span className={`inline-block font-mono text-xs font-semibold rounded px-1.5 py-0.5 ${cellColorMap[color]}`}>
-        {display}
+      <span className={`inline-block font-mono text-xs font-semibold rounded px-1.5 py-0.5 ${gradeColorMap[grade.color]}`}>
+        {grade.letter} <span className="opacity-60">({display})</span>
       </span>
     </td>
   )
@@ -76,6 +77,8 @@ export default function ComparisonTable() {
         <div className="flex flex-wrap gap-2">
           {areas.map((area) => {
             const isSelected = selectedIds.includes(area.id)
+            const composite = calculateCompositeScore(scorecard.scores[area.id], weights)
+            const grade = getLetterGrade(composite)
             return (
               <button
                 key={area.id}
@@ -89,7 +92,7 @@ export default function ComparisonTable() {
                 {area.name.split(' / ')[0]}
                 {isSelected && (
                   <span className="ml-1 font-mono">
-                    ({calculateCompositeScore(scorecard.scores[area.id], weights).toFixed(1)})
+                    ({grade.letter})
                   </span>
                 )}
               </button>

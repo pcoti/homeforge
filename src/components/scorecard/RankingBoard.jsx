@@ -1,7 +1,13 @@
 import { useMemo } from 'react'
 import { useAppContext } from '../../store/AppContext'
 import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg, getActiveWeights } from './criteria'
-import { ScoreBadge } from './ScoreBar'
+import { ScoreBadge, getLetterGrade } from './ScoreBar'
+
+const tierColors = {
+  contender: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  shortlist: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  eliminated: 'bg-gray-500/15 text-gray-400 border-gray-500/30 line-through',
+}
 
 export default function RankingBoard({ onSelectArea }) {
   const { state } = useAppContext()
@@ -62,13 +68,18 @@ export default function RankingBoard({ onSelectArea }) {
                   <span className="text-xs text-[var(--text-muted)]">
                     {[area.county, area.state].filter(Boolean).join(', ')}
                   </span>
+                  {area.tier && (
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${tierColors[area.tier]}`}>
+                      {area.tier}
+                    </span>
+                  )}
                 </div>
 
                 {/* Category score bars */}
                 <div className="grid grid-cols-5 gap-1.5 mt-2">
                   {CATEGORIES.map((cat) => {
                     const catScore = categoryScores[cat.id] || 0
-                    const w = weights[cat.id] ?? cat.defaultWeight
+                    const grade = getLetterGrade(catScore)
                     return (
                       <div key={cat.id} className="min-w-0">
                         <div className="flex items-center justify-between mb-0.5">
@@ -76,7 +87,7 @@ export default function RankingBoard({ onSelectArea }) {
                             {cat.name.split(' ')[0]}
                           </span>
                           <span className="text-[10px] font-mono text-[var(--text-muted)]">
-                            {catScore > 0 ? catScore.toFixed(1) : '--'}
+                            {catScore > 0 ? grade.letter : '--'}
                           </span>
                         </div>
                         <div className="h-1 rounded-full bg-[var(--bg-secondary)]">

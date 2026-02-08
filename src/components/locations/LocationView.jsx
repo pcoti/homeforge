@@ -7,6 +7,13 @@ import AreaCard from './LocationCard'
 import AreaModal from './AreaModal'
 import PropertyModal from './PropertyModal'
 
+const TIER_FILTERS = [
+  { id: 'all', label: 'All' },
+  { id: 'contender', label: 'Contenders' },
+  { id: 'shortlist', label: 'Shortlist' },
+  { id: 'eliminated', label: 'Eliminated' },
+]
+
 export default function LocationView() {
   const { state, dispatch } = useAppContext()
   const areas = state.locations || []
@@ -19,6 +26,7 @@ export default function LocationView() {
   const [activeAreaId, setActiveAreaId] = useState(null)
   const [expandedAreas, setExpandedAreas] = useState({})
   const [tagFilter, setTagFilter] = useState('')
+  const [tierFilter, setTierFilter] = useState('all')
   const [sortBy, setSortBy] = useState('name')
   const [search, setSearch] = useState('')
 
@@ -32,9 +40,21 @@ export default function LocationView() {
     return Array.from(tagSet).sort()
   }, [areas])
 
-  // Filter areas by tag + search
+  // Tier counts
+  const tierCounts = useMemo(() => {
+    const counts = { all: areas.length, contender: 0, shortlist: 0, eliminated: 0 }
+    areas.forEach((a) => {
+      if (a.tier && counts[a.tier] !== undefined) counts[a.tier]++
+    })
+    return counts
+  }, [areas])
+
+  // Filter areas by tag + search + tier
   const filteredAreas = useMemo(() => {
     let result = areas
+    if (tierFilter !== 'all') {
+      result = result.filter((a) => a.tier === tierFilter)
+    }
     if (tagFilter) {
       result = result.filter((a) => (a.tags || []).includes(tagFilter))
     }
@@ -67,7 +87,7 @@ export default function LocationView() {
       }
     })
     return result
-  }, [areas, tagFilter, search, sortBy, scorecard])
+  }, [areas, tagFilter, tierFilter, search, sortBy, scorecard])
 
   const toggleExpand = (id) => {
     setExpandedAreas((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -92,6 +112,11 @@ export default function LocationView() {
       dispatch({ type: ActionTypes.ADD_AREA, payload: data })
     }
     setShowAreaModal(false)
+  }
+
+  // Tier update
+  const handleUpdateTier = (areaId, tier) => {
+    dispatch({ type: ActionTypes.UPDATE_AREA, payload: { id: areaId, tier } })
   }
 
   // Property CRUD
@@ -181,8 +206,23 @@ export default function LocationView() {
           <Button onClick={handleAddArea}>+ Add Area</Button>
         </div>
 
-        {/* Tag filter chips */}
+        {/* Tier filter chips */}
         <div className="flex items-center gap-2 flex-wrap">
+          {TIER_FILTERS.map((tf) => (
+            <button
+              key={tf.id}
+              onClick={() => setTierFilter(tf.id)}
+              className={`px-3 py-1.5 text-sm rounded-lg border transition-all cursor-pointer ${
+                tierFilter === tf.id
+                  ? 'bg-[var(--accent)]/15 border-[var(--accent)]/30 text-[var(--accent)]'
+                  : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+              }`}
+            >
+              {tf.label} ({tierCounts[tf.id] || 0})
+            </button>
+          ))}
+          <span className="text-[var(--text-muted)] text-xs mx-1">|</span>
+          {/* Tag filter chips */}
           <button
             onClick={() => setTagFilter('')}
             className={`px-3 py-1.5 text-sm rounded-lg border transition-all cursor-pointer ${
@@ -191,7 +231,7 @@ export default function LocationView() {
                 : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
             }`}
           >
-            All ({areas.length})
+            All Tags
           </button>
           {allTags.map((tag) => (
             <button
@@ -223,6 +263,7 @@ export default function LocationView() {
             onAddProperty={() => handleAddProperty(area.id)}
             onEditProperty={handleEditProperty}
             onDeleteProperty={handleDeleteProperty}
+            onUpdateTier={handleUpdateTier}
           />
         ))}
       </div>

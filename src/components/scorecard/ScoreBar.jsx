@@ -22,6 +22,35 @@ const textMap = {
   red: 'text-red-400',
 }
 
+// Letter grade helper — maps 1-10 numeric score to letter grade + color
+export function getLetterGrade(score) {
+  if (!score || score <= 0) return { letter: '--', color: 'gray' }
+  if (score >= 9) return { letter: 'A+', color: 'emerald' }
+  if (score >= 8) return { letter: 'A', color: 'emerald' }
+  if (score >= 7) return { letter: 'B+', color: 'blue' }
+  if (score >= 6) return { letter: 'B', color: 'blue' }
+  if (score >= 5) return { letter: 'C+', color: 'amber' }
+  if (score >= 4) return { letter: 'C', color: 'amber' }
+  if (score >= 3) return { letter: 'D', color: 'red' }
+  return { letter: 'F', color: 'red' }
+}
+
+const gradeBgMap = {
+  emerald: 'bg-emerald-500/15',
+  blue: 'bg-blue-500/15',
+  amber: 'bg-amber-500/15',
+  red: 'bg-red-500/15',
+  gray: 'bg-[var(--bg-secondary)]',
+}
+
+const gradeTextMap = {
+  emerald: 'text-emerald-400',
+  blue: 'text-blue-400',
+  amber: 'text-amber-400',
+  red: 'text-red-400',
+  gray: 'text-[var(--text-muted)]',
+}
+
 export default function ScoreBar({ score, showLabel = false, compact = false }) {
   if (!score || score === 0) {
     return (
@@ -53,7 +82,7 @@ export default function ScoreBar({ score, showLabel = false, compact = false }) 
   )
 }
 
-// Composite score badge — larger, for overall/category scores
+// Composite score badge — shows letter grade as primary, numeric as secondary
 export function ScoreBadge({ score, size = 'md' }) {
   if (!score || score === 0) {
     return (
@@ -63,17 +92,20 @@ export function ScoreBadge({ score, size = 'md' }) {
     )
   }
 
-  const color = getScoreColor(Math.round(score))
+  const grade = getLetterGrade(score)
   const displayScore = score % 1 === 0 ? score : score.toFixed(1)
 
   return (
-    <div className={`flex flex-col items-center justify-center rounded-lg ${bgMap[color]} ${size === 'lg' ? 'w-14 h-14' : 'w-10 h-10'}`}>
-      <span className={`font-mono font-bold ${textMap[color]} ${size === 'lg' ? 'text-lg' : 'text-sm'}`}>
-        {displayScore}
+    <div
+      className={`flex flex-col items-center justify-center rounded-lg ${gradeBgMap[grade.color]} ${size === 'lg' ? 'w-14 h-14' : 'w-10 h-10'}`}
+      title={`Score: ${displayScore}/10`}
+    >
+      <span className={`font-mono font-bold ${gradeTextMap[grade.color]} ${size === 'lg' ? 'text-lg' : 'text-sm'}`}>
+        {grade.letter}
       </span>
-      {size === 'lg' && (
-        <span className={`text-[10px] ${textMap[color]} opacity-75`}>/10</span>
-      )}
+      <span className={`text-[10px] font-mono ${gradeTextMap[grade.color]} opacity-75`}>
+        ({displayScore})
+      </span>
     </div>
   )
 }

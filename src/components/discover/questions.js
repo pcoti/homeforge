@@ -40,6 +40,12 @@ export const QUESTIONS = [
         description: 'Can self-certify or act as own GC with minimal red tape',
         filter: (areaScores) => (areaScores?.buildingFreedom?.ownerBuilder?.score || 0) >= 7,
       },
+      {
+        id: 'waterRights',
+        label: 'Confirmed water rights / well permit feasibility',
+        description: 'Clear path to well permits and adequate aquifer/water source',
+        filter: (areaScores) => (areaScores?.landQuality?.waterRights?.score || 0) >= 7,
+      },
     ],
   },
   {

@@ -2,7 +2,7 @@ import { defaultState } from './defaults'
 
 const STORAGE_KEY = 'homeforge-data'
 // Bump this to force a full reset when data model changes significantly
-const SCHEMA_VERSION = 4
+const SCHEMA_VERSION = 5
 
 function deepMerge(target, source) {
   const result = { ...target }

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useAppContext } from '../../store/AppContext'
-import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg, getScoreColor } from './criteria'
+import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg, getScoreColor, getActiveWeights } from './criteria'
 import { ScoreBadge } from './ScoreBar'
 
 const cellColorMap = {
@@ -29,6 +29,7 @@ export default function ComparisonTable() {
   const { state } = useAppContext()
   const areas = state.locations || []
   const scorecard = state.scorecard || { weights: {}, scores: {} }
+  const weights = getActiveWeights(scorecard)
 
   // Allow selecting up to 5 areas for comparison
   const [selectedIds, setSelectedIds] = useState(() => {
@@ -36,7 +37,7 @@ export default function ComparisonTable() {
     const sorted = [...areas]
       .map((a) => ({
         id: a.id,
-        score: calculateCompositeScore(scorecard.scores[a.id], scorecard.weights),
+        score: calculateCompositeScore(scorecard.scores[a.id], weights),
       }))
       .sort((a, b) => b.score - a.score)
     return sorted.slice(0, 5).map((a) => a.id)
@@ -88,7 +89,7 @@ export default function ComparisonTable() {
                 {area.name.split(' / ')[0]}
                 {isSelected && (
                   <span className="ml-1 font-mono">
-                    ({calculateCompositeScore(scorecard.scores[area.id], scorecard.weights).toFixed(1)})
+                    ({calculateCompositeScore(scorecard.scores[area.id], weights).toFixed(1)})
                   </span>
                 )}
               </button>
@@ -121,7 +122,7 @@ export default function ComparisonTable() {
                 <td className="py-2 px-2 font-semibold text-sm">Overall Score</td>
                 {selectedAreas.map((area) => (
                   <td key={area.id} className="text-center py-2 px-2">
-                    <ScoreBadge score={calculateCompositeScore(scorecard.scores[area.id], scorecard.weights)} />
+                    <ScoreBadge score={calculateCompositeScore(scorecard.scores[area.id], weights)} />
                   </td>
                 ))}
               </tr>
@@ -146,7 +147,7 @@ export default function ComparisonTable() {
                           </svg>
                           <span className="font-medium text-xs text-[var(--accent)]">{cat.name}</span>
                           <span className="text-[10px] text-[var(--text-muted)] font-mono">
-                            ({scorecard.weights[cat.id] ?? cat.defaultWeight}%)
+                            ({weights[cat.id] ?? cat.defaultWeight}%)
                           </span>
                         </div>
                       </td>

@@ -1,4 +1,5 @@
 import { generateId } from '../utils/ids'
+import { getDefaultWeights } from '../components/scorecard/criteria'
 import { defaultState } from './defaults'
 
 export const ActionTypes = {
@@ -30,6 +31,12 @@ export const ActionTypes = {
   UPDATE_SCORECARD_WEIGHTS: 'UPDATE_SCORECARD_WEIGHTS',
   UPDATE_SCORECARD_SCORE: 'UPDATE_SCORECARD_SCORE',
   UPDATE_SCORECARD_NOTES: 'UPDATE_SCORECARD_NOTES',
+  // Weight profiles
+  ADD_WEIGHT_PROFILE: 'ADD_WEIGHT_PROFILE',
+  UPDATE_WEIGHT_PROFILE: 'UPDATE_WEIGHT_PROFILE',
+  DELETE_WEIGHT_PROFILE: 'DELETE_WEIGHT_PROFILE',
+  SET_ACTIVE_WEIGHT_PROFILE: 'SET_ACTIVE_WEIGHT_PROFILE',
+  RENAME_WEIGHT_PROFILE: 'RENAME_WEIGHT_PROFILE',
   // Chat
   ADD_CHAT_MESSAGE: 'ADD_CHAT_MESSAGE',
   CLEAR_CHAT: 'CLEAR_CHAT',
@@ -219,15 +226,84 @@ export function appReducer(state, action) {
         properties: (state.properties || []).filter((p) => p.id !== action.payload),
       }
 
-    // Scorecard
-    case ActionTypes.UPDATE_SCORECARD_WEIGHTS:
+    // Scorecard — update weights (works with profiles if active)
+    case ActionTypes.UPDATE_SCORECARD_WEIGHTS: {
+      const sc = state.scorecard || {}
+      // If weight profiles exist and one is active, update that profile's weights
+      if (sc.weightProfiles && sc.activeProfileId) {
+        return {
+          ...state,
+          scorecard: {
+            ...sc,
+            weightProfiles: sc.weightProfiles.map((p) =>
+              p.id === sc.activeProfileId
+                ? { ...p, weights: { ...p.weights, ...action.payload } }
+                : p
+            ),
+          },
+        }
+      }
+      // Legacy fallback: update flat weights
+      return {
+        ...state,
+        scorecard: {
+          ...sc,
+          weights: { ...sc.weights, ...action.payload },
+        },
+      }
+    }
+
+    case ActionTypes.ADD_WEIGHT_PROFILE: {
+      const sc2 = state.scorecard || {}
+      const newProfile = {
+        id: generateId(),
+        name: action.payload.name || 'New Profile',
+        weights: action.payload.weights || getDefaultWeights(),
+      }
+      return {
+        ...state,
+        scorecard: {
+          ...sc2,
+          weightProfiles: [...(sc2.weightProfiles || []), newProfile],
+          activeProfileId: newProfile.id,
+        },
+      }
+    }
+
+    case ActionTypes.DELETE_WEIGHT_PROFILE: {
+      const sc3 = state.scorecard || {}
+      const remaining = (sc3.weightProfiles || []).filter((p) => p.id !== action.payload)
+      return {
+        ...state,
+        scorecard: {
+          ...sc3,
+          weightProfiles: remaining,
+          activeProfileId: remaining.length > 0 ? remaining[0].id : null,
+        },
+      }
+    }
+
+    case ActionTypes.SET_ACTIVE_WEIGHT_PROFILE:
       return {
         ...state,
         scorecard: {
           ...state.scorecard,
-          weights: { ...state.scorecard.weights, ...action.payload },
+          activeProfileId: action.payload,
         },
       }
+
+    case ActionTypes.RENAME_WEIGHT_PROFILE: {
+      const { id: profileId, name: newName } = action.payload
+      return {
+        ...state,
+        scorecard: {
+          ...state.scorecard,
+          weightProfiles: (state.scorecard.weightProfiles || []).map((p) =>
+            p.id === profileId ? { ...p, name: newName } : p
+          ),
+        },
+      }
+    }
 
     case ActionTypes.UPDATE_SCORECARD_SCORE: {
       const { areaId, categoryId, criterionId, score } = action.payload

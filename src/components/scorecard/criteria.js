@@ -45,6 +45,18 @@ export const CATEGORIES = [
         description: 'Homeowner, flood, fire, and wind insurance burden',
         guide: '10 = very low | 8 = low | 6 = moderate | 4 = above avg | 2 = high',
       },
+      {
+        id: 'constructionCost',
+        name: 'Construction Cost ($/sqft)',
+        description: 'Average new construction cost per square foot in the area',
+        guide: '10 = under $100/sqft | 8 = $100–140 | 6 = $140–180 | 4 = $180–220 | 2 = over $220/sqft',
+      },
+      {
+        id: 'resaleLiquidity',
+        name: 'Resale & Liquidity',
+        description: 'How quickly properties sell and retain value in this market',
+        guide: '10 = hot market (<30 days avg) | 8 = healthy (30–60) | 6 = moderate (60–90) | 4 = slow (90–180) | 2 = stagnant (180+)',
+      },
     ],
   },
   {
@@ -82,6 +94,12 @@ export const CATEGORIES = [
         name: 'Zoning Flexibility',
         description: 'Agricultural/residential zoning flexibility for custom builds',
         guide: '10 = no zoning | 8 = very flexible ag/rural | 6 = standard residential | 4 = restrictive | 2 = very restrictive',
+      },
+      {
+        id: 'contractorAvailability',
+        name: 'Contractor Availability',
+        description: 'Availability of quality builders, subs, and tradespeople',
+        guide: '10 = many experienced builders | 8 = good selection | 6 = adequate | 4 = limited/long waits | 2 = very scarce',
       },
     ],
   },
@@ -152,6 +170,12 @@ export const CATEGORIES = [
         name: 'Metro / City Proximity',
         description: 'Drive time to nearest major city for services/culture',
         guide: '10 = under 20 min | 8 = 20–40 min | 6 = 40–60 min | 4 = 60–90 min | 2 = over 90 min',
+      },
+      {
+        id: 'seasonalAccess',
+        name: 'Seasonal Road Access',
+        description: 'Year-round road access reliability (snow, mud, flooding)',
+        guide: '10 = fully maintained year-round | 8 = reliable with minor closures | 6 = occasional issues | 4 = seasonal closures | 2 = frequently impassable',
       },
     ],
   },
@@ -255,6 +279,12 @@ export const CATEGORIES = [
         description: 'Power outage frequency and grid quality',
         guide: '10 = very reliable / co-op | 8 = reliable | 6 = occasional outages | 4 = frequent outages | 2 = unreliable',
       },
+      {
+        id: 'renewableEnergy',
+        name: 'Renewable Energy Potential',
+        description: 'Solar irradiance, wind potential, net metering laws, incentives',
+        guide: '10 = excellent solar/wind + strong incentives | 8 = good potential | 6 = moderate | 4 = limited | 2 = poor potential / no incentives',
+      },
     ],
   },
   {
@@ -286,6 +316,12 @@ export const CATEGORIES = [
         name: 'Proximity to Friends & Family',
         description: 'How easily can friends/family visit? (NJ friends, etc.)',
         guide: '10 = under 2 hr drive | 8 = 2–4 hr drive or short flight | 6 = 4–6 hr drive | 4 = long flight | 2 = very remote from family',
+      },
+      {
+        id: 'agingInPlace',
+        name: 'Aging-in-Place Friendliness',
+        description: 'Senior services, healthcare access, walkability for future needs',
+        guide: '10 = excellent senior infrastructure | 8 = good services nearby | 6 = adequate | 4 = limited | 2 = very rural/no services',
       },
     ],
   },
@@ -319,6 +355,12 @@ export const CATEGORIES = [
         description: 'Consistency of regulations, tax policy, governance',
         guide: '10 = very stable/predictable | 8 = stable | 6 = mostly stable | 4 = some volatility | 2 = unpredictable',
       },
+      {
+        id: 'environmentalRisk',
+        name: 'Environmental Red Flags',
+        description: 'Contamination, superfund sites, mining, industrial pollution, radon',
+        guide: '10 = no known issues | 8 = minimal | 6 = minor concerns | 4 = some contamination nearby | 2 = major environmental issues',
+      },
     ],
   },
   {
@@ -350,6 +392,18 @@ export const CATEGORIES = [
         name: 'Privacy & Seclusion',
         description: 'How private/secluded can you be on 5–20 acres?',
         guide: '10 = very remote/private | 8 = well-separated | 6 = moderate privacy | 4 = some neighbors | 2 = dense/subdivision',
+      },
+      {
+        id: 'selfSufficiency',
+        name: 'Self-Sufficiency Potential',
+        description: 'Ability to grow food, raise animals, collect rainwater, go off-grid',
+        guide: '10 = excellent (long season, water, legal) | 8 = good | 6 = moderate | 4 = limited (climate/legal) | 2 = very difficult',
+      },
+      {
+        id: 'septicFeasibility',
+        name: 'Septic Feasibility',
+        description: 'Soil perc test success rates, septic system viability',
+        guide: '10 = excellent perc, any system | 8 = good soils | 6 = acceptable with engineered | 4 = challenging | 2 = very poor / requires alt system',
       },
     ],
   },
@@ -403,6 +457,18 @@ export function getAllCriteria() {
 // Helper: get default weights
 export function getDefaultWeights() {
   return Object.fromEntries(CATEGORIES.map((c) => [c.id, c.defaultWeight]))
+}
+
+// Helper: get active weights from scorecard state (supports weight profiles)
+export function getActiveWeights(scorecard) {
+  if (!scorecard) return getDefaultWeights()
+  // If using weight profiles, find the active profile
+  if (scorecard.weightProfiles && scorecard.activeProfileId) {
+    const profile = scorecard.weightProfiles.find((p) => p.id === scorecard.activeProfileId)
+    if (profile) return profile.weights
+  }
+  // Fallback: use flat weights (legacy or default)
+  return scorecard.weights || getDefaultWeights()
 }
 
 // Score color based on value (1-10)

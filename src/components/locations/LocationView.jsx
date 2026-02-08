@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useAppContext } from '../../store/AppContext'
 import { ActionTypes } from '../../store/reducer'
-import { calculateCompositeScore } from '../scorecard/criteria'
+import { calculateCompositeScore, getActiveWeights } from '../scorecard/criteria'
 import Button from '../shared/Button'
 import AreaCard from './LocationCard'
 import AreaModal from './AreaModal'
@@ -23,6 +23,7 @@ export default function LocationView() {
   const [search, setSearch] = useState('')
 
   const scorecard = state.scorecard || { weights: {}, scores: {} }
+  const weights = getActiveWeights(scorecard)
 
   // Collect all tags for filter
   const allTags = useMemo(() => {
@@ -50,8 +51,8 @@ export default function LocationView() {
     result = [...result].sort((a, b) => {
       switch (sortBy) {
         case 'score': {
-          const sa = calculateCompositeScore(scorecard.scores[a.id], scorecard.weights)
-          const sb = calculateCompositeScore(scorecard.scores[b.id], scorecard.weights)
+          const sa = calculateCompositeScore(scorecard.scores[a.id], weights)
+          const sb = calculateCompositeScore(scorecard.scores[b.id], weights)
           return sb - sa
         }
         case 'landCost':

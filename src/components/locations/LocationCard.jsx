@@ -204,6 +204,43 @@ export default function AreaCard({ area, properties, expanded, onToggle, onEdit,
                 {area.taxInfo?.homesteadExemption && (
                   <div><span className="text-[var(--text-muted)]">Homestead:</span> {area.taxInfo.homesteadExemption}</div>
                 )}
+                {area.climate?.hardiness && (
+                  <div><span className="text-[var(--text-muted)]">Hardiness:</span> Zone {area.climate.hardiness}</div>
+                )}
+                {area.landInfo?.typicalLotSize && (
+                  <div><span className="text-[var(--text-muted)]">Lot Size:</span> {area.landInfo.typicalLotSize}</div>
+                )}
+              </div>
+            )}
+
+            {/* Outlook */}
+            {area.outlook && (
+              <div className="bg-[var(--bg-secondary)] rounded-lg p-3">
+                <p className="text-xs font-medium text-[var(--accent)] mb-1.5">Growth & Outlook</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  {area.outlook.populationTrend && (
+                    <div>
+                      <span className="text-[var(--text-muted)]">Population:</span>{' '}
+                      <span className={area.outlook.populationTrend === 'growing' ? 'text-emerald-400' : area.outlook.populationTrend === 'declining' ? 'text-red-400' : ''}>
+                        {area.outlook.populationTrend}
+                      </span>
+                    </div>
+                  )}
+                  {area.outlook.jobMarket && (
+                    <div>
+                      <span className="text-[var(--text-muted)]">Jobs:</span>{' '}
+                      <span className={area.outlook.jobMarket === 'strong' || area.outlook.jobMarket === 'booming' ? 'text-emerald-400' : ''}>
+                        {area.outlook.jobMarket}
+                      </span>
+                    </div>
+                  )}
+                  {area.outlook.housingAppreciation && (
+                    <div><span className="text-[var(--text-muted)]">Housing:</span> {area.outlook.housingAppreciation}</div>
+                  )}
+                </div>
+                {area.outlook.economicGrowth && (
+                  <p className="text-xs text-[var(--text-secondary)] mt-1.5">{area.outlook.economicGrowth}</p>
+                )}
               </div>
             )}
 

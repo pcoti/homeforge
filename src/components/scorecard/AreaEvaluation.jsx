@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useAppContext } from '../../store/AppContext'
 import { ActionTypes } from '../../store/reducer'
-import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg } from './criteria'
+import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg, getActiveWeights } from './criteria'
 import ScoreBar, { ScoreBadge } from './ScoreBar'
 import Card from '../shared/Card'
 
@@ -10,11 +10,12 @@ export default function AreaEvaluation({ areaId, onBack }) {
   const areas = state.locations || []
   const area = areas.find((a) => a.id === areaId)
   const scorecard = state.scorecard || { weights: {}, scores: {} }
+  const weights = getActiveWeights(scorecard)
   const areaScores = scorecard.scores[areaId] || {}
 
   const composite = useMemo(
-    () => calculateCompositeScore(areaScores, scorecard.weights),
-    [areaScores, scorecard.weights]
+    () => calculateCompositeScore(areaScores, weights),
+    [areaScores, weights]
   )
 
   if (!area) {
@@ -67,7 +68,7 @@ export default function AreaEvaluation({ areaId, onBack }) {
       {/* Category sections */}
       {CATEGORIES.map((cat) => {
         const catAvg = calculateCategoryAvg(areaScores, cat.id)
-        const catWeight = scorecard.weights[cat.id] ?? cat.defaultWeight
+        const catWeight = weights[cat.id] ?? cat.defaultWeight
 
         return (
           <Card key={cat.id}>

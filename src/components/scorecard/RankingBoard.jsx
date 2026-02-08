@@ -1,18 +1,19 @@
 import { useMemo } from 'react'
 import { useAppContext } from '../../store/AppContext'
-import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg } from './criteria'
+import { CATEGORIES, calculateCompositeScore, calculateCategoryAvg, getActiveWeights } from './criteria'
 import { ScoreBadge } from './ScoreBar'
 
 export default function RankingBoard({ onSelectArea }) {
   const { state } = useAppContext()
   const areas = state.locations || []
   const scorecard = state.scorecard || { weights: {}, scores: {} }
+  const weights = getActiveWeights(scorecard)
 
   const ranked = useMemo(() => {
     return areas
       .map((area) => ({
         area,
-        composite: calculateCompositeScore(scorecard.scores[area.id], scorecard.weights),
+        composite: calculateCompositeScore(scorecard.scores[area.id], weights),
         categoryScores: Object.fromEntries(
           CATEGORIES.map((cat) => [
             cat.id,
@@ -21,7 +22,7 @@ export default function RankingBoard({ onSelectArea }) {
         ),
       }))
       .sort((a, b) => b.composite - a.composite)
-  }, [areas, scorecard])
+  }, [areas, scorecard, weights])
 
   if (ranked.length === 0) {
     return (
@@ -67,7 +68,7 @@ export default function RankingBoard({ onSelectArea }) {
                 <div className="grid grid-cols-5 gap-1.5 mt-2">
                   {CATEGORIES.map((cat) => {
                     const catScore = categoryScores[cat.id] || 0
-                    const w = scorecard.weights[cat.id] ?? cat.defaultWeight
+                    const w = weights[cat.id] ?? cat.defaultWeight
                     return (
                       <div key={cat.id} className="min-w-0">
                         <div className="flex items-center justify-between mb-0.5">

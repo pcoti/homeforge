@@ -1,7 +1,7 @@
 // Discovery Wizard question definitions and scoring engine.
 // Each answer modifies weights and/or filters areas.
 
-import { CATEGORIES, calculateCategoryAvg } from '../scorecard/criteria'
+import { CATEGORIES, calculateCategoryAvg, getActiveWeights } from '../scorecard/criteria'
 
 export const QUESTIONS = [
   {
@@ -240,7 +240,8 @@ export const QUESTIONS = [
 
 // Calculate wizard-adjusted scores for all areas
 export function calculateWizardResults(areas, scorecardState, answers) {
-  const { weights: baseWeights, scores: allScores } = scorecardState
+  const baseWeights = getActiveWeights(scorecardState)
+  const allScores = scorecardState.scores || {}
 
   // Step 1: Build modified weights from answers
   const modifiedWeights = { ...baseWeights }

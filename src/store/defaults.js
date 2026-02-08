@@ -148,7 +148,8 @@ export const defaultTimeline = [
   { id: generateId(), milestone: 'Final inspection & move in', phase: 'Move In', targetDate: '2029-06-30', status: 'not-started', notes: '', completedDate: null },
 ]
 
-export const defaultLocations = []
+// Two-tier location model: Areas contain Properties
+export const defaultAreas = []
 
 export const defaultChatHistory = []
 
@@ -157,6 +158,7 @@ export const defaultState = {
   finances: defaultFinances,
   requirements: defaultRequirements,
   timeline: defaultTimeline,
-  locations: defaultLocations,
+  locations: defaultAreas, // kept as "locations" key for backward compat
+  properties: [],
   chatHistory: defaultChatHistory,
 }

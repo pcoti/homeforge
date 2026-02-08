@@ -14,9 +14,19 @@ export const ActionTypes = {
   ADD_MILESTONE: 'ADD_MILESTONE',
   UPDATE_MILESTONE: 'UPDATE_MILESTONE',
   DELETE_MILESTONE: 'DELETE_MILESTONE',
-  ADD_LOCATION: 'ADD_LOCATION',
-  UPDATE_LOCATION: 'UPDATE_LOCATION',
-  DELETE_LOCATION: 'DELETE_LOCATION',
+  // Areas (regions/counties)
+  ADD_AREA: 'ADD_AREA',
+  UPDATE_AREA: 'UPDATE_AREA',
+  DELETE_AREA: 'DELETE_AREA',
+  // Properties (specific parcels under an area)
+  ADD_PROPERTY: 'ADD_PROPERTY',
+  UPDATE_PROPERTY: 'UPDATE_PROPERTY',
+  DELETE_PROPERTY: 'DELETE_PROPERTY',
+  // Legacy compat
+  ADD_LOCATION: 'ADD_AREA',
+  UPDATE_LOCATION: 'UPDATE_AREA',
+  DELETE_LOCATION: 'DELETE_AREA',
+  // Chat
   ADD_CHAT_MESSAGE: 'ADD_CHAT_MESSAGE',
   CLEAR_CHAT: 'CLEAR_CHAT',
   IMPORT_STATE: 'IMPORT_STATE',
@@ -134,34 +144,75 @@ export function appReducer(state, action) {
         timeline: state.timeline.filter((m) => m.id !== action.payload),
       }
 
-    case ActionTypes.ADD_LOCATION:
+    // Areas (regions/counties)
+    case ActionTypes.ADD_AREA:
       return {
         ...state,
         locations: [
           ...state.locations,
           {
             id: generateId(),
+            tags: [],
             pros: [],
             cons: [],
             rating: 3,
+            coordinates: { lat: null, lng: null },
+            climate: { avgHighSummer: '', avgLowWinter: '', annualRainfall: '', hardiness: '' },
+            infrastructure: { internetProviders: '', waterSource: '', electricProvider: '', cellCoverage: '' },
+            landInfo: { avgPricePerAcre: 0, typicalLotSize: '', terrain: '', soilType: '' },
+            taxInfo: { propertyTaxRate: '', homesteadExemption: '' },
             createdAt: new Date().toISOString(),
             ...action.payload,
           },
         ],
       }
 
-    case ActionTypes.UPDATE_LOCATION:
+    case ActionTypes.UPDATE_AREA:
       return {
         ...state,
-        locations: state.locations.map((l) =>
-          l.id === action.payload.id ? { ...l, ...action.payload } : l
+        locations: state.locations.map((a) =>
+          a.id === action.payload.id ? { ...a, ...action.payload } : a
         ),
       }
 
-    case ActionTypes.DELETE_LOCATION:
+    case ActionTypes.DELETE_AREA:
       return {
         ...state,
-        locations: state.locations.filter((l) => l.id !== action.payload),
+        locations: state.locations.filter((a) => a.id !== action.payload),
+        // Also remove all properties in this area
+        properties: (state.properties || []).filter((p) => p.areaId !== action.payload),
+      }
+
+    // Properties (specific parcels)
+    case ActionTypes.ADD_PROPERTY:
+      return {
+        ...state,
+        properties: [
+          ...(state.properties || []),
+          {
+            id: generateId(),
+            pros: [],
+            cons: [],
+            rating: 3,
+            status: 'researching',
+            createdAt: new Date().toISOString(),
+            ...action.payload,
+          },
+        ],
+      }
+
+    case ActionTypes.UPDATE_PROPERTY:
+      return {
+        ...state,
+        properties: (state.properties || []).map((p) =>
+          p.id === action.payload.id ? { ...p, ...action.payload } : p
+        ),
+      }
+
+    case ActionTypes.DELETE_PROPERTY:
+      return {
+        ...state,
+        properties: (state.properties || []).filter((p) => p.id !== action.payload),
       }
 
     case ActionTypes.ADD_CHAT_MESSAGE:

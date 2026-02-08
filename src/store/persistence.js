@@ -1,6 +1,8 @@
 import { defaultState } from './defaults'
 
 const STORAGE_KEY = 'homeforge-data'
+// Bump this to force a full reset when data model changes significantly
+const SCHEMA_VERSION = 2
 
 function deepMerge(target, source) {
   const result = { ...target }
@@ -24,18 +26,23 @@ function deepMerge(target, source) {
 export function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return defaultState
+    if (!raw) return { ...defaultState, _schemaVersion: SCHEMA_VERSION }
     const saved = JSON.parse(raw)
+    // Force reset if schema version changed (new seed data, new modules, etc.)
+    if ((saved._schemaVersion || 0) < SCHEMA_VERSION) {
+      localStorage.removeItem(STORAGE_KEY)
+      return { ...defaultState, _schemaVersion: SCHEMA_VERSION }
+    }
     // Deep merge with defaults so new schema fields get default values
     return deepMerge(defaultState, saved)
   } catch {
-    return defaultState
+    return { ...defaultState, _schemaVersion: SCHEMA_VERSION }
   }
 }
 
 export function saveState(state) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, _schemaVersion: SCHEMA_VERSION }))
   } catch {
     // localStorage full or unavailable
   }
